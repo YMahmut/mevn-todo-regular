@@ -4,12 +4,12 @@
     <span v-if="isEditMode && todoInfo.index === selectedEditItemIndex" class="col-md todos">
                   <input class="todo-edit-input" type="text" v-model="selectedEditItem"
                          @keypress.enter="EditTodo(todoInfo.todo, todoInfo.index)"/>
-                </span>
-      <span v-if="todoInfo.index !== selectedEditItemIndex"
+    </span>
+    <span v-else-if="todoInfo.index !== selectedEditItemIndex"
             @click="TodoCompletedControl(todoInfo.todo)"
             :class="{done:todoInfo.todo.completed}"
             class="col-md todos">{{ todoInfo.todo.description }}
-                </span>
+    </span>
     </div>
     <div class="col-3" style="margin-left: -40px">
     <span>
@@ -20,7 +20,7 @@
       >
         Delete
       </button>
-      <button v-if="isEditMode"
+      <button v-else
               :style="todoInfo.index !== selectedEditItemIndex? {opacity:'0'} : {opacity:'1'}"
               class="col-xs m-2 p-2 del-button"
               @click="editCancelled(todoInfo.index)"
@@ -118,7 +118,7 @@ export default {
   position: relative;
   width: 87%;
   user-select: none;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .del-button, .edit-button {
