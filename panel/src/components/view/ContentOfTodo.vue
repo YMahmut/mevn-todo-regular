@@ -11,18 +11,12 @@
             class="col-md todos">{{ todoInfo.todo.description }}
     </span>
     </div>
-    <div class="col-3" style="margin-left: -40px">
+    <div class="col-3 tablet-class" style="margin-left: -40px">
     <span>
-      <button v-if="!isEditMode"
-              :style="todoInfo.todo.completed ? {border:'3px solid green'} : {color:''}"
-              class="col-xs m-2 p-2 del-button"
-              @click="DeleteTodo(todoInfo.todo, todoInfo.index)"
-      >
-        Delete
-      </button>
+      <DeleteTodo v-if="!isEditMode" :todoInfo="todoInfo" @hide-deleted="$emit('hide-deleted', $event)"/>
       <button v-else
               :style="todoInfo.index !== selectedEditItemIndex? {opacity:'0'} : {opacity:'1'}"
-              class="col-xs m-2 p-2 del-button"
+              class="col-xs m-2 p-2 cancel-button"
               @click="editCancelled(todoInfo.index)"
       >
         Cancel
@@ -44,9 +38,11 @@
 
 <script>
 import axios from "axios";
+import DeleteTodo from "@/components/view/DeleteTodo";
 
 export default {
   name: "ContentOfTodos",
+  components: {DeleteTodo},
   props: ["todoInfo", "todos"],
   data() {
     return {
@@ -57,11 +53,6 @@ export default {
     }
   },
   methods: {
-
-    DeleteTodo(todo, index) {
-      this.$emit("hide-deleted", index)
-      this.todoDeleteItem(todo);
-    },
     startToEdit(todo, index) {
       this.isEditMode = true;
       this.selectedEditItemIndex = index;
@@ -89,19 +80,15 @@ export default {
     async todoCompletedViseVersa(todoId, todoCompleted) {
       await axios.put(`/api/updateTodo/${todoId}`, {completed: todoCompleted});
     },
-    async todoDeleteItem(todo) {
-      await axios.delete(`/api/deleteTodo/${todo._id}`);
-    },
+
     async todoEditItem(todo) {
       const isEmpty = todo.description.replace(/[^a-z0-9]/gi, '');
-      console.log("isEmpty", isEmpty)
       if (!isEmpty.length) {
         setTimeout(() => {
           location.reload();
         }, 50);
         return;
       }
-      console.log("todo.description", todo.description)
       await axios.put(`/api/updateTodo/${todo._id}`, {description: todo.description, completed: todo.completed});
     }
   },
@@ -120,9 +107,12 @@ export default {
   user-select: none;
   word-break: break-word;
 }
-
-.del-button, .edit-button {
-  border: none;
+@media (min-width:240px) and (max-width:310px) {
+  .tablet-class {
+    width: 40%;
+  }
+}
+.edit-button, .cancel-button {
   border-radius: 5px;
   background-color: #f3ebeb;
   width: 60px;
