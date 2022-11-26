@@ -3,13 +3,9 @@ import axios from "axios";
 
 const store = createStore({
     state : {
-            count: 0,
             todos: [],
     },
     mutations: {
-        increment (state) {
-            state.count++
-        },
         listTodos(state,response){
             state.todos = response.data;
         },
@@ -18,11 +14,6 @@ const store = createStore({
         async AddNewTodoItem({ dispatch }, e) {
             await axios.post(`/api/newTodo`, {description: e, completed: false});
             dispatch('getTodos');
-        },
-        actionB ({ dispatch, commit }) {
-            return dispatch('actionA').then(() => {
-                commit('someOtherMutation')
-            })
         },
         async getTodos({commit}){
             const response =await axios.get('/api/todoLists');
