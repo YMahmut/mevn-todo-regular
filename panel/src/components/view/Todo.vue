@@ -2,14 +2,13 @@
   <div id="todo">
     <div class="row add-todo-button-initial">
       <span class="col">
-        <new-todo @todos="todos=$event"/>
+        <new-todo />
       </span>
       <div class="col">
         <TransitionGroup name="list" tag="ul">
           <li class="m-2 p-2 tablet-class" v-for="(todo,index) in todos" :key="todo._id">
             <content-of-todo
                 :todoInfo="{todo,index}"
-                :todos="todos"
                 @hide-deleted="todos.splice($event, 1)"
                 @show-updated-todo="todos[$event.index].description=$event.editedItem"
             />
@@ -22,22 +21,26 @@
 </template>
 
 <script>
-import axios from "axios"
 import NewTodo from "@/components/view/NewTodo";
 import ContentOfTodo from "@/components/view/ContentOfTodo";
+import {mapActions, mapState} from "vuex"
 
 
 export default {
   name: "ToDo",
   components: {ContentOfTodo, NewTodo},
-  data() {
-    return {
-      todos: [],
-    }
+  computed:{
+    ...mapState({
+      todos:(state)=>state.todos,
+    })
   },
-  async mounted() {
-    const response = await axios.get('/api/todoLists');
-    this.todos = response.data;
+  methods:{
+    ...mapActions({
+      getTodos:"getTodos"
+    })
+  },
+  mounted() {
+    this.getTodos();
   }
 
 }

@@ -37,13 +37,13 @@
 </template>
 
 <script>
-import axios from "axios";
 import DeleteTodo from "@/components/view/DeleteTodo";
+import {mapActions, mapState} from "vuex";
 
 export default {
   name: "ContentOfTodos",
   components: {DeleteTodo},
-  props: ["todoInfo", "todos"],
+  props: ["todoInfo"],
   data() {
     return {
       lined: false,
@@ -52,7 +52,16 @@ export default {
       selectedEditItemIndex: null,
     }
   },
+  computed:{
+    ...mapState({
+      todos:(state)=>state.todos,
+    })
+  },
   methods: {
+    ...mapActions({
+      todoCompletedViseVersa:"todoCompletedViseVersa",
+      todoEditItem:"todoEditItem",
+    }),
     startToEdit(todo, index) {
       this.isEditMode = true;
       this.selectedEditItemIndex = index;
@@ -64,6 +73,14 @@ export default {
       this.selectedEditItemIndex = null;
       this.isEditMode = false;
       this.selectedEditItem = "";
+
+      const isEmpty = todo.description.replace(/[^a-z0-9]/gi, '');
+      if (!isEmpty.length) {
+        setTimeout(() => {
+          location.reload();
+        }, 50);
+        return;
+      }
       this.todoEditItem(todo);
     },
     editCancelled(index) {
@@ -74,23 +91,8 @@ export default {
     },
     TodoCompletedControl(todo) {
       todo.completed = !todo.completed;
-      this.todoCompletedViseVersa(todo._id, todo.completed);
+      this.todoCompletedViseVersa({todoId:todo._id, todoCompleted:todo.completed});
     },
-
-    async todoCompletedViseVersa(todoId, todoCompleted) {
-      await axios.put(`/api/updateTodo/${todoId}`, {completed: todoCompleted});
-    },
-
-    async todoEditItem(todo) {
-      const isEmpty = todo.description.replace(/[^a-z0-9]/gi, '');
-      if (!isEmpty.length) {
-        setTimeout(() => {
-          location.reload();
-        }, 50);
-        return;
-      }
-      await axios.put(`/api/updateTodo/${todo._id}`, {description: todo.description, completed: todo.completed});
-    }
   },
 }
 </script>

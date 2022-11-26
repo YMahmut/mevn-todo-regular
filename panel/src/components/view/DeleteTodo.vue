@@ -9,18 +9,18 @@
 </template>
 
 <script>
-import axios from "axios";
+import {mapActions} from "vuex";
 
 export default {
   name: "DeleteTodo",
   props: ["todoInfo"],
   methods: {
+    ...mapActions({
+      todoDeleteItem:"todoDeleteItem"
+    }),
     DeleteTodo(todo, index) {
       this.$emit("hide-deleted", index)
-      this.todoDeleteItem(todo);
-    },
-    async todoDeleteItem(todo) {
-      await axios.delete(`/api/deleteTodo/${todo._id}`);
+      this.todoDeleteItem(todo._id);
     },
   }
 }

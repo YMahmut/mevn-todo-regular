@@ -7,8 +7,7 @@
 </template>
 
 <script>
-import axios from "axios";
-
+import {mapActions} from "vuex"
 export default {
   name: "newTodo",
   data(){
@@ -17,17 +16,16 @@ export default {
     }
   },
   methods:{
+    ...mapActions({
+      AddNewTodoItem:"AddNewTodoItem"
+    }),
     addNewTodo() {
       const isEmpty = this.doTo.replace(/[^a-z0-9]/gi, '');
       if (!isEmpty.length) return;
       this.AddNewTodoItem(this.doTo);
       this.doTo = "";
     },
-    async AddNewTodoItem(e) {
-      await axios.post(`/api/newTodo`, {description: e, completed: false});
-      const response = await axios.get('/api/todoLists');
-      this.$emit('todos',response.data);
-    },
+
   }
 }
 </script>
