@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 
 const todoListItemsRoutes=require('./api/services/todoLists')
 const newTodoRoutes=require('./api/services/newTodo')
-const updateTodoRoutes=require('./api/services/updatetodo')
+const updateTodoRoutes=require('./api/services/updateTodo')
 const deleteTodoRoutes=require('./api/services/deleteTodo')
 
 app.use('/api/todoLists', todoListItemsRoutes)
